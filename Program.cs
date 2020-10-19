@@ -14,9 +14,8 @@ namespace TODO
 
             do
             {
-                WriteLine("1. Add employee");
-                WriteLine("2. Search employee");
-                WriteLine("3. Exit");
+                WriteLine("1. Add todo");
+                WriteLine("2. Exit");
 
                 ConsoleKeyInfo input;
                 
