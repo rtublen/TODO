@@ -6,7 +6,6 @@ namespace TODO
     {
         static void Main(string[] args)
         {
-
             Console.CursorVisible = false;
 
             bool appliationRunning = true;
