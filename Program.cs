@@ -1,36 +1,45 @@
-﻿using System.ComponentModel.Design;
-using System;
+﻿using System;
+using System.Threading;
+using static System.Console;
 
 namespace TODO
 {
-    class Program
+    internal class Program
     {
-        static void Main(string[] args)
+        private static void Main()
         {
+
             bool appIsRunning = true;
+            CursorVisible = false;
+
             do
             {
-                Console.WriteLine("1. Add todo");
-                Console.WriteLine("2. Exit");
+                WriteLine("1. Add todo");
+                WriteLine("2. Exit");
 
-                ConsoleKeyInfo input = Console.ReadKey(true);
-                bool inputOk = input.Key == ConsoleKey.D1 ||input.Key == ConsoleKey.D2;
+                ConsoleKeyInfo input = ReadKey(true);
+                bool inputOk = input.Key == ConsoleKey.D1 || input.Key == ConsoleKey.D2;
 
-                while(!inputOk) 
+                while (!inputOk)
                 {
-                    input = Console.ReadKey(true);
-                    inputOk = input.Key == ConsoleKey.D1 ||input.Key == ConsoleKey.D2;
+                    input = ReadKey(true);
+                    inputOk = input.Key == ConsoleKey.D1 || input.Key == ConsoleKey.D2;
                 }
-                
-    
+
+                Clear();
+
                 switch (input.Key)
                 {
                     case ConsoleKey.D1:
-                        Console.WriteLine("You pushed 'Add to do'");
-                        Console.ReadKey(true);
-                        break; 
+                        WriteLine("You pushed 'Add to do'");
+                        ReadKey(true);
+                        Clear();
+                        break;
 
                     case ConsoleKey.D2:
+                        WriteLine("Shutting down the program");
+                        Thread.Sleep(3000);
+                        Clear();
                         appIsRunning = false;
                         break;
                 }
@@ -39,7 +48,7 @@ namespace TODO
             } while (appIsRunning);
 
 
-            
+
         }
     }
 }
