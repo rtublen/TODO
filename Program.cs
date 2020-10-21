@@ -27,6 +27,11 @@ namespace TODO
 
                 input = ReadKey(true);
 
+                do
+                {
+                    invalidInput = !(input.Key == ConsoleKey.D1 || input.Key == ConsoleKey.D2);
+                } while (invalidInput);
+
                 Clear();
 
                 switch (input.Key)
@@ -63,7 +68,7 @@ namespace TODO
                 string yourTask = ReadLine();
 
                 SetCursorPosition(10, +1);
-                string dueDate = ReadLine();
+                DateTime dueDate = DateTime.Parse(ReadLine());
 
                 Task task = new Task(yourTask, dueDate);
 
@@ -73,12 +78,14 @@ namespace TODO
 
                 input = ReadKey(true);
 
-                Clear();
+                
 
                 do
                 {
                     invalidInput = !(input.Key == ConsoleKey.Y || input.Key == ConsoleKey.N);
                 } while (invalidInput);
+
+                Clear();
 
                 if (input.Key == ConsoleKey.Y)
                 {

@@ -4,7 +4,7 @@ namespace TODO.Model
 {
     public class Task
     {
-        public Task(string yourTask, string dueDate)
+        public Task(string yourTask, DateTime dueDate)
         {
             YourTask = yourTask;
             DueDate = dueDate;
@@ -17,7 +17,7 @@ namespace TODO.Model
             {
                 return yourTask;
             }
-            set
+            private set
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {
@@ -26,26 +26,9 @@ namespace TODO.Model
 
                 yourTask = value;
             }
-
-
         }
 
-        private string dueDate;
-        public string DueDate
-        {
-            get
-            {
-                return dueDate;
-            }
-            set
-            {
-                if (string.IsNullOrWhiteSpace(value))
-                {
-                    throw new ArgumentException("Parameter youTask cannot be null or empty");
-                }
+        public DateTime DueDate { get; }
 
-                dueDate = value;
-            }
-        }
     }
 }
