@@ -12,7 +12,7 @@ namespace TODO
 
             do
             {
-                Console.WriteLine("1. Add To-Do");
+                Console.WriteLine("1. Add task");
 
                 Console.WriteLine("2. Exit");
 
