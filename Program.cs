@@ -1,28 +1,60 @@
 ﻿using System;
+using System.Collections.Generic;
+using TODO.Domain;
+using static System.Console;
+using Task = System.Threading.Tasks.Task;
 
 namespace TODO
 {
     class Program
     {
+        
         static void Main(string[] args)
         {
-            Console.CursorVisible = false;
-
+            CursorVisible = false;
+             List<TheTask> taskList = new List<TheTask>();
             bool applicationRunning = true;
 
             do
             {
-                Console.WriteLine("1. Add task");
+                WriteLine("1. Add task");
 
-                Console.WriteLine("2. Exit");
+                WriteLine("2. Exit");
 
-                ConsoleKeyInfo input = Console.ReadKey(true);
+                ConsoleKeyInfo input = ReadKey(true);
 
-                Console.Clear();
+                Clear();
 
                 switch (input.Key)
                 {
                     case ConsoleKey.D1:
+
+                        WriteLine("Task: ");
+                        WriteLine("Due Date: ");
+
+                        SetCursorPosition(6, 0);
+                        string task = ReadLine();
+
+                        SetCursorPosition(10, 1);
+                        DateTime dueDate = DateTime.Parse(ReadLine());
+
+                        TheTask newTask = new TheTask(task, dueDate);
+
+                        WriteLine("");
+                        WriteLine("Is this correct? (Y)es (N)o");
+                        ConsoleKeyInfo keyInput = ReadKey(true);
+
+                        switch(keyInput.Key)
+                        {
+                            case ConsoleKey.Y:
+
+                                taskList.Add(newTask);
+                                break;
+
+                            case ConsoleKey.N:
+
+                                return;
+                        }
 
                         break;
 
