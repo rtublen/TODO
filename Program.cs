@@ -6,7 +6,7 @@ namespace TODO
 {
     class Program
     {
-        static Dictionary<string, string> taskList = new Dictionary<string, string>();
+        static List<PlannedTask> taskList = new List<PlannedTask>();
         static void Main(string[] args)
         {
             Console.CursorVisible = false;
@@ -45,6 +45,7 @@ namespace TODO
             bool correctInfo = false;
             do
             {
+                Console.Clear();
                 Console.CursorVisible = true;
                 Console.WriteLine("    Task: \n\n" +
                                   "Due date: ");
@@ -58,22 +59,27 @@ namespace TODO
 
                 ConsoleKeyInfo input = Console.ReadKey(true);
 
+                while (input.Key != ConsoleKey.N && input.Key != ConsoleKey.Y) 
+                {
+                    input = Console.ReadKey(true);
+                }
+
                 switch (input.Key)
                 {
                     case ConsoleKey.N:
 
-                        Console.Clear();
                         break;
                     case ConsoleKey.Y:
 
                         Console.WriteLine("Task added!");
                         Thread.Sleep(2000);
                         correctInfo = true;
-                        taskList.Add(task, dueDate);
-                        Console.Clear();
+                        PlannedTask plannedTask = new PlannedTask(task, dueDate);
+                        taskList.Add(plannedTask);
                         break;
                 }
             } while (!correctInfo);
+            Console.Clear();
         }
     }
 }
