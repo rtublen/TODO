@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading;
 
 namespace TODO
@@ -53,8 +54,8 @@ namespace TODO
 
                 Console.CursorVisible = true;
                 Console.WriteLine("Task:  ");
-                Console.WriteLine("Due date:  ");
-             
+                Console.WriteLine("Due date (yyyy-MM-dd):  ");
+
 
                 Console.SetCursorPosition(36, 0);
 
@@ -62,7 +63,7 @@ namespace TODO
 
                 Console.SetCursorPosition(36, 1);
 
-                var dueDate = Console.ReadLine();
+                var dueDateString = Console.ReadLine();
 
                 Console.CursorVisible = false;
 
@@ -75,26 +76,31 @@ namespace TODO
                     isCorrectInput = Console.ReadKey(true).Key;
                 }
 
-                switch (isCorrectInput)
+                if (isCorrectInput == ConsoleKey.Y)
                 {
-                    case ConsoleKey.Y:
-
-                        
+                    if (!string.IsNullOrWhiteSpace(dueDateString) && DateTime.TryParseExact(dueDateString, "yyyy-MM-dd", CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime dueDate))
+                    {
                         MyTask newTask = new MyTask(task, dueDate);
 
-                        
+
                         MyTaskList.Add(newTask);
 
                         Console.WriteLine("Task registered.");
                         Thread.Sleep(2000);
-                        break;
+                    }
+                    else
+                    {
+                        throw new ArgumentException("DueDate was of invalid format or empty, please use the format yyyy-MM-dd", "DueDate");
+                    }
 
-                    case ConsoleKey.N:
-                        continue;
 
-                    default:
-                        continue;
+                    
                 }
+                else
+                {
+                    continue;
+                }
+
                 break;
             }
             Console.Clear();
