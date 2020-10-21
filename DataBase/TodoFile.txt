@@ -1,10 +1,1 @@
-Klona repo
-Skapa feature branch med namn "Add-task-(ditt github-användarnamn)" (från develop)
-Checka ut feature branch (Add-task-(ditt github-användarnamn))
-Lägg till kod för att skriva ut följande meny, samt läsa in val från avnändaren (tips: menu-snippet!) 1. Add task 2. Exit
-Skapa commit som innehåller ändring, med meddelande "Add menu".
-Döp om din branch och använda ditt github-kontonamn så att branch-namnet blir unikt!
-Pusha till GitHub (och skapa tracking-branch samtidigt!)
-Skapa pull request.  -# Description  -Adds initial menu with options "Add task" and "Exit".  -# Verify feature  1. Start app and verify menu options are available
-Sätt läraren som "Reviewer", sätt er själva som ansvarig för att fixa eventuella ändringar.
-Skicka meddelande i chatten i mötet "PR skapad".
+Make TODO APP:2020-10-21
