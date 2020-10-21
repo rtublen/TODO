@@ -4,7 +4,16 @@ using System.Text;
 
 namespace TODO.Domain
 {
-    class Task
+    class TheTask
     {
+        public TheTask(string task, DateTime dueDate)
+        {
+            pTask = task;
+            DueDate = dueDate;
+        }
+
+        public string pTask { get; }
+
+        public DateTime DueDate { get; }
     }
 }

@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using TODO.Domain;
 using static System.Console;
-using Task = System.Threading.Tasks.Task;
 
 namespace TODO
 {
     class Program
     {
-        
+
         static void Main(string[] args)
         {
             CursorVisible = false;
-             List<TheTask> taskList = new List<TheTask>();
+            List<TheTask> taskList = new List<TheTask>();
             bool applicationRunning = true;
 
             do
@@ -28,36 +28,45 @@ namespace TODO
                 switch (input.Key)
                 {
                     case ConsoleKey.D1:
-
-                        WriteLine("Task: ");
-                        WriteLine("Due Date: ");
-
-                        SetCursorPosition(6, 0);
-                        string task = ReadLine();
-
-                        SetCursorPosition(10, 1);
-                        DateTime dueDate = DateTime.Parse(ReadLine());
-
-                        TheTask newTask = new TheTask(task, dueDate);
-
-                        WriteLine("");
-                        WriteLine("Is this correct? (Y)es (N)o");
-                        ConsoleKeyInfo keyInput = ReadKey(true);
-
-                        switch(keyInput.Key)
+                        bool addTaskrunning = true;
+                        do
                         {
-                            case ConsoleKey.Y:
+                            WriteLine("Task: ");
+                            WriteLine("Due Date: ");
 
-                                taskList.Add(newTask);
-                                break;
+                            SetCursorPosition(6, 0);
+                            string task = ReadLine();
 
-                            case ConsoleKey.N:
+                            SetCursorPosition(10, 1);
+                            DateTime dueDate = DateTime.Parse(ReadLine());
 
-                                return;
-                        }
+                            TheTask newTask = new TheTask(task, dueDate);
 
+                            WriteLine("");
+                            WriteLine("Is this correct? (Y)es (N)o");
+                            ConsoleKeyInfo keyInput = ReadKey(true);
+
+                            Clear();
+
+                            switch (keyInput.Key)
+                            {
+                                case ConsoleKey.Y:
+
+                                    taskList.Add(newTask);
+                                    WriteLine("Task added");
+                                    Thread.Sleep(750);
+                                    Clear();
+                                    addTaskrunning = false;
+                                    break;
+
+                                case ConsoleKey.N:
+
+                                    break;
+                            }
+
+                            
+                        } while (addTaskrunning);
                         break;
-
                     case ConsoleKey.D2:
 
                         applicationRunning = false;
