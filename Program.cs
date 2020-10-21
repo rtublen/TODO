@@ -31,7 +31,7 @@ namespace TODO
                     case ConsoleKey.D1:
 
                         string tasks;
-                        DateTime dateTime;
+                        DateTime dueDate;
 
                         ConsoleKeyInfo userChoice;
 
@@ -51,7 +51,7 @@ namespace TODO
                             tasks = ReadLine();
 
                             SetCursorPosition(10, 1);
-                            dateTime = DateTime.Parse(ReadLine());
+                            dueDate = DateTime.Parse(ReadLine());
 
                             Clear();
 
@@ -60,7 +60,7 @@ namespace TODO
                             WriteLine("Is this information correct? (Y)es/(N)o" + "\n");
 
                             WriteLine($"Task: {tasks}");
-                            WriteLine($"Due Date: {dateTime:yy-MM-dd}");
+                            WriteLine($"Due Date: {dueDate:yy-MM-dd}");
 
                             userChoice = ReadKey(true);
 
@@ -70,7 +70,7 @@ namespace TODO
 
                         } while (incorrectInformation);
 
-                        Task task = new Task(tasks, dateTime);
+                        Task task = new Task(tasks, dueDate);
 
                         taskList.Add(task);
 
