@@ -40,7 +40,9 @@ namespace TODO
                 if (value.Date < DateTime.Now.Date)
                 {
                     throw new ArgumentException("A new task due date must be on a future or present date.", "DueDate");
-                } }
+                }
+                dueDate = value;
+            }
         }
 
 
