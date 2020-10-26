@@ -6,6 +6,11 @@ namespace TODO
 {
     public class MyTask
     {
+        public MyTask (string name)
+        {
+            Name = name;
+        }
+
         public MyTask(string name, DateTime dueDate)
         {
             Name = name;
@@ -19,25 +24,25 @@ namespace TODO
             get { return name; }
             private set
             {
-                if (!string.IsNullOrWhiteSpace(value))
+                if (string.IsNullOrWhiteSpace(value))
                 {
-                    name = value;
+                     throw new ArgumentException("A task is required to have a name.", "Name");
                 }
-                else
-                {
-                    throw new ArgumentException("A task is required to have a name.", "Name");
-                }
+                name = value;
+
             }
         }
 
-        private DateTime dueDate;
+        private DateTime? dueDate;
 
-        public DateTime DueDate
+        public DateTime? DueDate
         {
             get { return dueDate; }
             private set
             {
-                if (value.Date < DateTime.Now.Date)
+
+
+                if (value != null && value.Value.Date < DateTime.Now.Date)
                 {
                     throw new ArgumentException("A new task due date must be on a future or present date.", "DueDate");
                 }
