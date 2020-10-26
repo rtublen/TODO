@@ -19,7 +19,9 @@ namespace TODO
             {
                 Console.WriteLine("1. Add task");
 
-                Console.WriteLine("2. Exit");
+                Console.WriteLine("2. List tasks");
+
+                Console.WriteLine("3. Exit");
 
                 ConsoleKeyInfo input = Console.ReadKey(true);
 
@@ -33,7 +35,13 @@ namespace TODO
 
                         break;
 
-                    case ConsoleKey.D2:
+                        case ConsoleKey.D2:
+                        
+                        ListTasks();
+                        
+                        break;
+
+                    case ConsoleKey.D3:
 
                         applicationRunning = false;
 
@@ -43,6 +51,19 @@ namespace TODO
 
             } while (applicationRunning);
 
+        }
+
+        private static void ListTasks()
+        {
+
+            Console.WriteLine("Name              Due Date");
+            foreach(var myTask in MyTaskList)
+            {
+                Console.WriteLine($"{myTask.Name}           {myTask.DueDate}");
+            }
+
+            Console.ReadKey(true);
+            Console.Clear();
         }
 
         private static void AddTask()
@@ -59,7 +80,7 @@ namespace TODO
 
                 Console.SetCursorPosition(36, 0);
 
-                var task = Console.ReadLine();
+                var taskName = Console.ReadLine();
 
                 Console.SetCursorPosition(36, 1);
 
@@ -78,20 +99,26 @@ namespace TODO
 
                 if (isCorrectInput == ConsoleKey.Y)
                 {
-                    if (!string.IsNullOrWhiteSpace(dueDateString) && DateTime.TryParseExact(dueDateString, "yyyy-MM-dd", CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime dueDate))
+                    MyTask myTask;
+                   if (string.IsNullOrWhiteSpace(dueDateString))
                     {
-                        MyTask newTask = new MyTask(task, dueDate);
+                        myTask = new MyTask(name: taskName);
+                    }
 
-
-                        MyTaskList.Add(newTask);
-
-                        Console.WriteLine("Task registered.");
-                        Thread.Sleep(2000);
+                    else if (DateTime.TryParseExact(dueDateString, "yyyy-MM-dd", CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime dueDate))
+                    {
+                        myTask = new MyTask(name: taskName, dueDate: dueDate);
                     }
                     else
                     {
                         throw new ArgumentException("DueDate was of invalid format or empty, please use the format yyyy-MM-dd", "DueDate");
                     }
+
+                    MyTaskList.Add(myTask);
+
+                    Console.WriteLine("Task registered.");
+                    Thread.Sleep(2000);
+                    
 
 
                     
