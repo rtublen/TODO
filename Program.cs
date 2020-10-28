@@ -22,6 +22,7 @@ namespace TODO
                 Console.WriteLine("1. Add task");
                 Console.WriteLine("2. List tasks");
                 Console.WriteLine("3. Exit");
+
                 ConsoleKeyInfo input = Console.ReadKey(true);
                 Console.Clear();
 
@@ -73,6 +74,19 @@ namespace TODO
             Console.Clear();
         }
 
+        private static void ListTasks()
+        {
+
+            Console.WriteLine("Name              Due Date");
+            foreach(var myTask in MyTaskList)
+            {
+                Console.WriteLine($"{myTask.Name}           {myTask.DueDate}");
+            }
+
+            Console.ReadKey(true);
+            Console.Clear();
+        }
+
         private static void AddTask()
         {
 
@@ -83,7 +97,9 @@ namespace TODO
                 Console.WriteLine("Task:  ");
                 Console.WriteLine("Due date (yyyy-MM-dd):  ");
                 Console.SetCursorPosition(36, 0);
+
                 var taskName = Console.ReadLine();
+
                 Console.SetCursorPosition(36, 1);
                 var dueDateString = Console.ReadLine();
                 Console.CursorVisible = false;
@@ -96,10 +112,12 @@ namespace TODO
                 if (isCorrectInput == ConsoleKey.Y)
                 {
                     MyTask myTask;
+
                     if (string.IsNullOrWhiteSpace(dueDateString))
                     {
                         myTask = new MyTask(name: taskName);
                     }
+
                     else if (DateTime.TryParseExact(dueDateString, "yyyy-MM-dd", CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime dueDate))
                     {
                         myTask = new MyTask(name: taskName, dueDate: dueDate);
@@ -108,6 +126,7 @@ namespace TODO
                     {
                         throw new ArgumentException("DueDate was of invalid format or empty, please use the format yyyy-MM-dd", "DueDate");
                     }
+
 
                     InsertMyTask(myTask);
 
