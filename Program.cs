@@ -10,11 +10,8 @@ namespace TODO
     class Program
     {
         static string connectionString = "Server=localhost;Database=TODO;Integrated Security=True";
-<<<<<<< HEAD
-        // TODO: Lägg till fler exampel på connection strings
-=======
+
         public static List<MyTask> MyTaskList = new List<MyTask>();
->>>>>>> cf5c03c78f5ac02337132293190e5d7a8636eece
 
         static void Main(string[] args)
         {
@@ -120,10 +117,7 @@ namespace TODO
                 if (isCorrectInput == ConsoleKey.Y)
                 {
                     MyTask myTask;
-<<<<<<< HEAD
 
-=======
->>>>>>> cf5c03c78f5ac02337132293190e5d7a8636eece
                     if (string.IsNullOrWhiteSpace(dueDateString))
                     {
                         myTask = new MyTask(name: taskName);
@@ -138,24 +132,12 @@ namespace TODO
                         throw new ArgumentException("DueDate was of invalid format or empty, please use the format yyyy-MM-dd", "DueDate");
                     }
 
-<<<<<<< HEAD
-
-                    InsertMyTask(myTask);
-
-                    Console.WriteLine("Task registered.");
-                    Thread.Sleep(2000);
-=======
                     InsertMyTask(myTask);
 
                     // MyTaskList.Add(myTask);
 
                     Console.WriteLine("Task registered.");
                     Thread.Sleep(2000);
-
-
-
-
->>>>>>> cf5c03c78f5ac02337132293190e5d7a8636eece
                 }
                 else
                 {
@@ -181,26 +163,6 @@ namespace TODO
             connection.Open();
             command.ExecuteNonQuery();
             connection.Close();
-        }
-
-        private static void InsertMyTask(MyTask myTask)
-        {
-            var sql = $@"INSERT INTO MyTask(Name, DueDate)
-                        VALUES(@Name, @DueDate)";
-
-            SqlConnection connection = new SqlConnection(connectionString);
-
-            SqlCommand command = new SqlCommand(sql, connection);
-
-            command.Parameters.AddWithValue("@Name", myTask.Name);
-            command.Parameters.AddWithValue("@DueDate", myTask.DueDate);
-
-            connection.Open();
-
-            command.ExecuteNonQuery();
-
-            connection.Close();
-
         }
     }
 }
