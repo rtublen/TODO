@@ -1,7 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Threading;
 
@@ -30,25 +29,29 @@ namespace TODO
                 switch (input.Key)
                 {
                     case ConsoleKey.D1:
+
                         AddTask();
+
                         break;
 
                     case ConsoleKey.D2:
+
                         ListTasks();
 
-
-
                         break;
+
                     case ConsoleKey.D3:
+
                         applicationRunning = false;
+
                         break;
                 }
             } while (applicationRunning);
         }
 
-      
-		
-        
+
+
+
 
         private static IList<MyTask> FetchMyTasks()
         {
@@ -81,14 +84,84 @@ namespace TODO
         {
             var myTaskList = FetchMyTasks();
 
-            Console.WriteLine("Name              Due Date");
+            Console.WriteLine("Task                       Due Date");
+            Console.WriteLine("-----------------------------------");
 
             foreach (var myTask in myTaskList)
             {
                 Console.WriteLine($"{myTask.Name}           {myTask.DueDate}");
             }
 
-            Console.ReadKey(true);
+            Console.WriteLine("\n[D] Delete [Esc] Main menu");
+
+            ConsoleKeyInfo userCommand;
+
+            do
+            {
+                userCommand = Console.ReadKey(true);
+
+            } while (!(userCommand.Key == ConsoleKey.D || userCommand.Key == ConsoleKey.Escape));
+
+            if (userCommand.Key == ConsoleKey.D)
+            {
+                ShowDeleteTask();
+            }
+
+
+
+            Console.Clear();
+        }
+
+        private static void ShowDeleteTask()
+        {
+            Console.Clear();
+
+            var myTaskList = FetchMyTasks();
+
+            Console.WriteLine("ID  Task                  Due Date");
+            Console.WriteLine("----------------------------------");
+
+            foreach (var myTask in myTaskList)
+            {
+                Console.WriteLine($"{myTask.Id} {myTask.Name}           {myTask.DueDate}");
+            }
+
+            Console.CursorVisible = true;
+
+            Console.Write("\nID: ");
+
+            int deleteTaskId = int.Parse(Console.ReadLine());
+
+            foreach (var myTask in myTaskList)
+            {
+                if (myTask.Id == deleteTaskId)
+                {
+                    var sql = $@"
+                                DELETE FROM MyTask WHERE Id=@deleteTaskId";
+                                
+
+                    SqlConnection connection = new SqlConnection(connectionString);
+                    SqlCommand command = new SqlCommand(sql, connection);
+
+                    command.Parameters.AddWithValue("@deleteTaskId", deleteTaskId.ToString());
+
+                    connection.Open();
+                    command.ExecuteNonQuery();
+                    connection.Close();
+
+                    Console.Clear();
+                    Console.CursorVisible = false;
+                    Console.WriteLine("Task deleted");
+                    Thread.Sleep(2000);
+                    Console.Clear();
+                }
+
+                else
+                {
+                    Console.WriteLine("Task not found");
+                }
+
+            }
             Console.Clear();
         }
 

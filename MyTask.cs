@@ -24,7 +24,13 @@ namespace TODO
             DueDate = dueDate;
         }
 
-        public int Id { get; }
+        private int id;
+        public int Id
+        {
+            get { return id; }
+            private set { id = value; }
+        }
+        
 
         private string name;
 
