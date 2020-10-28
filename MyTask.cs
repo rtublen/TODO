@@ -17,6 +17,15 @@ namespace TODO
             DueDate = dueDate;
         }
 
+        public MyTask(int id, string name, DateTime dueDate)
+        {
+            Id = id;
+            Name = name;
+            DueDate = dueDate;
+        }
+
+        public int Id { get; }
+
         private string name;
 
         public string Name
@@ -55,3 +64,5 @@ namespace TODO
 
     }
 }
+
+
