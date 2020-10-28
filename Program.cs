@@ -81,15 +81,59 @@ namespace TODO
         {
             var myTaskList = FetchMyTasks();
 
-            Console.WriteLine("Name              Due Date");
+            Console.WriteLine("ID  Name              Due Date");
 
             foreach (var myTask in myTaskList)
             {
-                Console.WriteLine($"{myTask.Name}           {myTask.DueDate}");
+                Console.WriteLine($"{myTask.Id}  {myTask.Name}           {myTask.DueDate}");
             }
 
-            Console.ReadKey(true);
-            Console.Clear();
+            Console.WriteLine(" ");
+
+            Console.WriteLine("[D] Delete [ESC] Main Menu");
+
+            ConsoleKeyInfo escDelete = Console.ReadKey(true);
+
+            if (escDelete.Key == ConsoleKey.D)
+            {
+                DeleteTask();
+
+                Console.Clear();
+            }
+            else if (escDelete.Key == ConsoleKey.Escape) {
+                Console.Clear();
+            }
+            else
+            {
+                Console.Clear();
+
+                Console.WriteLine("Invalid key.");
+
+                Thread.Sleep(2000);
+
+                Console.Clear();
+            }
+        }
+
+        private static void DeleteTask()
+        {
+            Console.WriteLine(" ");
+
+            Console.Write("Delete Task by ID: ");
+
+            var stringReadLine = Console.ReadLine();
+            
+            string sql = $@"DELETE FROM MyTask WHERE Id={stringReadLine}";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlCommand command = new SqlCommand(sql, connection))
+            {
+                connection.Open();
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                connection.Close();
+            }
         }
 
         private static void AddTask()
