@@ -46,9 +46,9 @@ namespace TODO
             } while (applicationRunning);
         }
 
-      
-		
-        
+
+
+
 
         private static IList<MyTask> FetchMyTasks()
         {
@@ -67,9 +67,15 @@ namespace TODO
                 {
                     var id = (int)reader["Id"];
                     var name = (string)reader["Name"];
-                    var dueDate = (DateTime)reader["DueDate"];
-
-                    myTaskList.Add(new MyTask(id, name, dueDate));
+                    if (reader.IsDBNull(2))
+                    {
+                        myTaskList.Add(new MyTask(id, name, null));
+                    }
+                    else
+                    {
+                        var dueDate = (DateTime)reader["DueDate"];
+                        myTaskList.Add(new MyTask(id, name, dueDate));
+                    }
                 }
 
                 connection.Close();
@@ -81,15 +87,71 @@ namespace TODO
         {
             var myTaskList = FetchMyTasks();
 
-            Console.WriteLine("Name              Due Date");
+            Console.WriteLine($"{"Name",-50}Due Date");
+            Console.WriteLine("============================================================");
 
             foreach (var myTask in myTaskList)
             {
-                Console.WriteLine($"{myTask.Name}           {myTask.DueDate}");
+                Console.WriteLine($"{myTask.Name,-50}{(myTask.DueDate.HasValue ? myTask.DueDate.Value.ToShortDateString() : "")}");
             }
 
-            Console.ReadKey(true);
+            Console.CursorTop++;
+            Console.WriteLine("[D] Delete | [Esc] Return");
+            ConsoleKeyInfo input;
+
+            while (
+                (input = Console.ReadKey(true)).Key != ConsoleKey.D &&
+                input.Key != ConsoleKey.Escape)
+            { }
+
+            if (input.Key == ConsoleKey.D)
+            {
+                RemoveTask(myTaskList);
+            }
             Console.Clear();
+        }
+
+        private static void RemoveTask(IList<MyTask> myTaskList)
+        {
+            Console.Clear();
+            Console.WriteLine($"{"ID",-4}{"Name",-50}Due Date");
+            Console.WriteLine("================================================================");
+
+            foreach (var myTask in myTaskList)
+            {
+                Console.WriteLine($"{myTask.Id,-4}{myTask.Name,-50}{(myTask.DueDate.HasValue ? myTask.DueDate.Value.ToShortDateString() : "")}");
+            }
+
+            Console.CursorVisible = true;
+            Console.CursorTop++;
+            Console.Write("ID: ");
+
+            var idToRemove = int.Parse(Console.ReadLine());
+            Console.CursorVisible = false;
+
+            DeleteTask(idToRemove);
+        }
+
+        private static void DeleteTask(int idToRemove)
+        {
+            var sql = $@"
+                DELETE FROM MyTask
+                WHERE Id = @Id";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+
+                SqlCommand command = new SqlCommand(sql, connection);
+
+                command.Parameters.AddWithValue("@Id", idToRemove);
+
+                connection.Open();
+                command.ExecuteNonQuery();
+                connection.Close();
+
+            }
+            Console.WriteLine("Task Deleted");
+            Thread.Sleep(2000);
         }
 
         private static void AddTask()
@@ -150,15 +212,33 @@ namespace TODO
 
         private static void InsertMyTask(MyTask myTask)
         {
-            var sql = $@"
+            SqlConnection connection = new SqlConnection(connectionString);
+            SqlCommand command;
+            if (!(myTask.DueDate == null))
+            {
+                var sql = $@"
                 INSERT INTO MyTask (Name, DueDate)
                 VALUES (@Name, @DueDate)";
 
-            SqlConnection connection = new SqlConnection(connectionString);
-            SqlCommand command = new SqlCommand(sql, connection);
+                command = new SqlCommand(sql, connection);
 
-            command.Parameters.AddWithValue("@Name", myTask.Name);
-            command.Parameters.AddWithValue("@DueDate", myTask.DueDate);
+                command.Parameters.AddWithValue("@Name", myTask.Name);
+
+                command.Parameters.AddWithValue("@DueDate", myTask.DueDate);
+
+            }
+            else
+            {
+                var sql = $@"
+                INSERT INTO MyTask (Name)
+                VALUES (@Name)";
+
+                command = new SqlCommand(sql, connection);
+
+                command.Parameters.AddWithValue("@Name", myTask.Name);
+
+            }
+
 
             connection.Open();
             command.ExecuteNonQuery();

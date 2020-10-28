@@ -11,13 +11,13 @@ namespace TODO
             Name = name;
         }
 
-        public MyTask(string name, DateTime dueDate)
+        public MyTask(string name, DateTime? dueDate)
         {
             Name = name;
             DueDate = dueDate;
         }
 
-        public MyTask(int id, string name, DateTime dueDate)
+        public MyTask(int id, string name, DateTime? dueDate)
         {
             Id = id;
             Name = name;
