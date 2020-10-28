@@ -81,17 +81,74 @@ namespace TODO
         {
             var myTaskList = FetchMyTasks();
 
-            Console.WriteLine("Name              Due Date");
+            Console.WriteLine(" ID       Name              Due Date");
 
             foreach (var myTask in myTaskList)
             {
-                Console.WriteLine($"{myTask.Name}           {myTask.DueDate}");
+                Console.WriteLine($" {myTask.Id}        {myTask.Name}           {myTask.DueDate}");
             }
 
-            Console.ReadKey(true);
+
+            Console.WriteLine("\n[D] Delete [Esc] Exit");
+
+            var lastCursorPositionTop = Console.CursorTop - 1;
+
+            string inputDeleteId;
+
+
+            var keyInput = Console.ReadKey(true).Key;
+            while (keyInput != ConsoleKey.D && keyInput != ConsoleKey.Escape)
+            {
+                keyInput = Console.ReadKey(true).Key;
+            }
+
+            if (keyInput == ConsoleKey.D)
+            {
+                Console.SetCursorPosition(0, lastCursorPositionTop);
+                Console.WriteLine("                     ");
+
+                Console.SetCursorPosition(0,lastCursorPositionTop);
+                Console.Write("ID: ");
+                inputDeleteId = Console.ReadLine();
+
+                try
+                {
+                    int inputIdNumber = Int32.Parse(inputDeleteId);
+                    
+                    RemoveTaskById(inputIdNumber);
+                    Console.WriteLine("Task deleted");
+                }
+                catch 
+                {
+                    Console.WriteLine("Invalid ID");
+                }
+
+                Thread.Sleep(2000);
+
+            }
+           
+
+
+
+            
             Console.Clear();
         }
 
+
+        private static void RemoveTaskById(int taskId) 
+        {
+            var sql = $@"DELETE FROM MyTask WHERE Id=@taskId;";
+
+            SqlConnection connection = new SqlConnection(connectionString);
+            SqlCommand command = new SqlCommand(sql, connection);
+
+            command.Parameters.AddWithValue("@taskId", taskId);
+            
+
+            connection.Open();
+            command.ExecuteNonQuery();
+            connection.Close();
+        }
         private static void AddTask()
         {
 
