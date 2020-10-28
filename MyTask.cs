@@ -24,6 +24,7 @@ namespace TODO
             DueDate = dueDate;
         }
 
+
         public int Id { get; }
 
         private string name;
@@ -57,6 +58,17 @@ namespace TODO
                 }
                 dueDate = value;
             }
+        }
+
+        public DateTime? CompletedAt { get; private set; }
+
+        public void CompleteTask()
+        {
+            if (CompletedAt != null)
+            {
+                throw new ArgumentException("Cannot change to completed twice");
+            }
+            CompletedAt = DateTime.Now;
         }
 
 
