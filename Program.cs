@@ -124,6 +124,10 @@ namespace TODO
             var stringReadLine = Console.ReadLine();
             
             string sql = $@"DELETE FROM MyTask WHERE Id={stringReadLine}";
+            
+            Console.WriteLine("Task deleted.");
+
+            Thread.Sleep(2000);
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             using (SqlCommand command = new SqlCommand(sql, connection))
