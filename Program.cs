@@ -32,12 +32,8 @@ namespace TODO
                     case ConsoleKey.D1:
                         AddTask();
                         break;
-
                     case ConsoleKey.D2:
                         ListTasks();
-
-
-
                         break;
                     case ConsoleKey.D3:
                         applicationRunning = false;
@@ -81,15 +77,74 @@ namespace TODO
         {
             var myTaskList = FetchMyTasks();
 
-            Console.WriteLine("Name              Due Date");
+            Console.WriteLine("ID  Task                          Due Date");
+            Console.WriteLine("------------------------------------------");
 
             foreach (var myTask in myTaskList)
             {
-                Console.WriteLine($"{myTask.Name}           {myTask.DueDate}");
+                Console.WriteLine($"{myTask.Id}   {myTask.Name}                   {myTask.DueDate}");
             }
 
+            Console.WriteLine();
+            Console.WriteLine("[D] Delete");
+
             Console.ReadKey(true);
+
+            bool incorrectInput = true;
+
+            do
+            {
+                ConsoleKeyInfo input = Console.ReadKey(true);
+
+                switch (input.Key)
+                {
+                    case ConsoleKey.D:
+
+                        Console.CursorVisible = true;
+
+                        Console.WriteLine();
+                        Console.Write("ID: ");
+
+                        var inputId = int.Parse(Console.ReadLine());
+
+                        foreach (var myTask in myTaskList)
+                        {
+                            if (inputId == myTask.Id)
+                            {
+                                DeleteMyTask(myTask);
+
+                                Console.Clear();
+                                Console.WriteLine("Task deleted");
+                                Thread.Sleep(2000);
+                            }
+                        }
+
+                        incorrectInput = false;
+
+                        break;
+                    case ConsoleKey.Escape:
+                        incorrectInput = false;
+                        break;
+                }
+            } while (incorrectInput);
+
             Console.Clear();
+        }
+
+        private static void DeleteMyTask(MyTask myTask)
+        {
+            var sql = $@"
+                DELETE FROM MyTask
+                WHERE Id=(@Id)";
+
+            SqlConnection connection = new SqlConnection(connectionString);
+            SqlCommand command = new SqlCommand(sql, connection);
+
+            command.Parameters.AddWithValue("@Id", myTask.Id);
+
+            connection.Open();
+            command.ExecuteNonQuery();
+            connection.Close();
         }
 
         private static void AddTask()
