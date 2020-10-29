@@ -15,6 +15,7 @@ CREATE TABLE [dbo].[MyTask](
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[Name] [nvarchar](50) NOT NULL,
 	[DueDate] [datetime] NULL,
+	[CompletedAt] [datetime] NULL
 PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC

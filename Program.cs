@@ -1,7 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Threading;
 
@@ -52,7 +51,9 @@ namespace TODO
 
         private static IList<MyTask> FetchMyTasks()
         {
-            string sql = "SELECT Id, Name, DueDate FROM MyTask";
+            string sql = @"
+                         SELECT Id, Name, DueDate FROM MyTask
+                         WHERE CompletedAt IS NULL";
 
             List<MyTask> myTaskList = new List<MyTask>();
 
@@ -85,58 +86,124 @@ namespace TODO
 
         private static void ListTasks()
         {
-            var myTaskList = FetchMyTasks();
-
-            Console.WriteLine($"{"Name",-50}Due Date");
-            Console.WriteLine("============================================================");
-
-            foreach (var myTask in myTaskList)
+            bool listNavigationOn = true;
+            do
             {
-                Console.WriteLine($"{myTask.Name,-50}{(myTask.DueDate.HasValue ? myTask.DueDate.Value.ToShortDateString() : "")}");
-            }
+                var myTaskList = FetchMyTasks();
+                
+                Console.WriteLine($"{"Name",-50}Due Date");
+                Console.WriteLine("============================================================");
 
+                foreach (var myTask in myTaskList)
+                {
+                    Console.WriteLine($"{myTask.Name,-50}{(myTask.DueDate.HasValue ? myTask.DueDate.Value.ToShortDateString() : "")}");
+                }
+
+                Console.CursorTop++;
+                Console.WriteLine("[C] Complete | [D] Delete | [Esc] Return");
+                ConsoleKeyInfo input;
+
+                while (
+                    (input = Console.ReadKey(true)).Key != ConsoleKey.C &&
+                    input.Key != ConsoleKey.D &&
+                    input.Key != ConsoleKey.Escape)
+                { }
+
+                if (input.Key == ConsoleKey.C) MarkTaskAsCompleteFrom(myTaskList);
+                else if (input.Key == ConsoleKey.D) RemoveTask(myTaskList);
+                else if (input.Key == ConsoleKey.Escape) listNavigationOn = false;
+                
+                Console.Clear();
+
+            } while (listNavigationOn);
+        }
+
+        private static void MarkTaskAsCompleteFrom(IList<MyTask> myTaskList)
+        {
+            ListTasksShortVersion();
+
+            Console.CursorVisible = true;
             Console.CursorTop++;
-            Console.WriteLine("[D] Delete | [Esc] Return");
-            ConsoleKeyInfo input;
+            Console.Write("ID: ");
 
-            while (
-                (input = Console.ReadKey(true)).Key != ConsoleKey.D &&
-                input.Key != ConsoleKey.Escape)
-            { }
+            bool idOk = int.TryParse(Console.ReadLine(), out int idToMarkAsComplete);
+            Console.CursorVisible = false;
 
-            if (input.Key == ConsoleKey.D)
+            if (idOk && MarkAsComplete(idToMarkAsComplete)) Console.WriteLine("Task completed");
+            else Console.WriteLine("Task not found");
+
+            Thread.Sleep(3000);
+        }
+
+        private static bool MarkAsComplete(int idToMarkAsComplete)
+        {
+            // Specify sql command
+            string sql = @"
+                        UPDATE MyTask
+                        SET CompletedAt = @CompletedAt
+                        WHERE Id=@Id";
+
+            int numberOfRowsAffected;
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlCommand command = new SqlCommand(sql, connection))
             {
-                RemoveTask(myTaskList);
+                // Add parameters to sql command
+                command.Parameters.AddWithValue("@Id", idToMarkAsComplete);
+                command.Parameters.AddWithValue("@CompletedAt", DateTime.Today);
+
+                // Open connection
+                connection.Open();
+
+                // Execute command
+                numberOfRowsAffected = command.ExecuteNonQuery();
+
+                // Close connection
+                connection.Close();
             }
-            Console.Clear();
+
+            return numberOfRowsAffected > 0;
         }
 
         private static void RemoveTask(IList<MyTask> myTaskList)
         {
+            ListTasksShortVersion();
+
+            Console.CursorVisible = true;
+            Console.CursorTop++;
+            Console.Write("ID: ");
+
+            bool idOk = int.TryParse(Console.ReadLine(), out int idToRemove);
+            Console.CursorVisible = false;
+
+            if (idOk && DeleteTask(idToRemove)) Console.WriteLine("Task Deleted");
+            else Console.WriteLine("Task not found");
+
+            Thread.Sleep(2000);
+        }
+
+        private static void ListTasksShortVersion()
+        {
+            var myTaskList = FetchMyTasks();
+
             Console.Clear();
             Console.WriteLine($"{"ID",-4}{"Name",-50}Due Date");
             Console.WriteLine("================================================================");
 
             foreach (var myTask in myTaskList)
             {
-                Console.WriteLine($"{myTask.Id,-4}{myTask.Name,-50}{(myTask.DueDate.HasValue ? myTask.DueDate.Value.ToShortDateString() : "")}");
+                Console.WriteLine(
+                    $"{myTask.Id,-4}{myTask.Name,-50}{(myTask.DueDate.HasValue ? myTask.DueDate.Value.ToShortDateString() : "")}");
             }
-
-            Console.CursorVisible = true;
-            Console.CursorTop++;
-            Console.Write("ID: ");
-
-            var idToRemove = int.Parse(Console.ReadLine());
-            Console.CursorVisible = false;
-
-            DeleteTask(idToRemove);
         }
 
-        private static void DeleteTask(int idToRemove)
+        private static bool DeleteTask(int idToRemove)
         {
             var sql = $@"
                 DELETE FROM MyTask
                 WHERE Id = @Id";
+
+            int numberOfRowsAffected;
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
@@ -146,12 +213,11 @@ namespace TODO
                 command.Parameters.AddWithValue("@Id", idToRemove);
 
                 connection.Open();
-                command.ExecuteNonQuery();
+                numberOfRowsAffected = command.ExecuteNonQuery();
                 connection.Close();
-
             }
-            Console.WriteLine("Task Deleted");
-            Thread.Sleep(2000);
+
+            return numberOfRowsAffected > 0;
         }
 
         private static void AddTask()
