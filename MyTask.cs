@@ -58,7 +58,16 @@ namespace TODO
             }
         }
 
-        public DateTime? CompletedAt { get; } = DateTime.Now;
+        public DateTime? CompletedAt { get; private set; }
+
+        public void Complete()
+        {
+            if (CompletedAt != null)
+            {
+                throw new ArgumentException("Already completed!");
+            }
+            CompletedAt = DateTime.Now;
+        }
     }
 }
 

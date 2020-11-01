@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
 
 namespace TODO
@@ -56,8 +55,8 @@ namespace TODO
 
             List<MyTask> myTaskList = new List<MyTask>();
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            using (SqlCommand command = new SqlCommand(sql, connection))
+            using SqlConnection connection = new SqlConnection(connectionString);
+            using SqlCommand command = new SqlCommand(sql, connection);
             {
                 connection.Open();
 
@@ -83,9 +82,6 @@ namespace TODO
             return myTaskList;
         }
 
-        private static bool TaskNotCompleted(MyTask myTask)
-            => myTask.CompletedAt == null;
-
         private static void ListTasks()
         {
             var myTaskList = FetchMyTasks();
@@ -93,7 +89,7 @@ namespace TODO
             Console.WriteLine($"{"Name",-50}Due Date");
             Console.WriteLine("============================================================");
 
-            foreach (var myTask in myTaskList.Where(TaskNotCompleted)) // TODO varför behövs inte denna sortering i looparna i metoderna Update och Remove? Fråga Robert!
+            foreach (var myTask in myTaskList)
             {
                 Console.WriteLine($"{myTask.Name,-50}{(myTask.DueDate.HasValue ? myTask.DueDate.Value.ToShortDateString() : "")}");
             }
@@ -125,10 +121,9 @@ namespace TODO
                 SET CompletedAt = @CompletedAt
                 WHERE Id=@Id";
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            using SqlConnection connection = new SqlConnection(connectionString);
+            using SqlCommand command = new SqlCommand(sql, connection);
             {
-                SqlCommand command = new SqlCommand(sql, connection);
-
                 command.Parameters.AddWithValue("@Id", idToSetAsComplete);
                 command.Parameters.AddWithValue("@CompletedAt", myTask.CompletedAt);
 
@@ -137,6 +132,8 @@ namespace TODO
                 connection.Close();
 
             }
+
+            Console.Clear();
             Console.WriteLine("Task Completed");
             Thread.Sleep(2000);
 
@@ -159,6 +156,8 @@ namespace TODO
 
             var idToSetAsComplete = int.Parse(Console.ReadLine());
             Console.CursorVisible = false;
+
+           myTask.Complete();
 
             CompleteTask(idToSetAsComplete, myTask); 
         }
@@ -186,14 +185,15 @@ namespace TODO
 
         private static void DeleteTask(int idToRemove)
         {
-            var sql = $@"
+            var sql = @"
                 DELETE FROM MyTask
                 WHERE Id = @Id";
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            using SqlConnection connection = new SqlConnection(connectionString);
+            using SqlCommand command = new SqlCommand(sql, connection);
             {
 
-                SqlCommand command = new SqlCommand(sql, connection);
+                
 
                 command.Parameters.AddWithValue("@Id", idToRemove);
 
@@ -202,6 +202,7 @@ namespace TODO
                 connection.Close();
 
             }
+            Console.Clear();
             Console.WriteLine("Task Deleted");
             Thread.Sleep(2000);
         }
@@ -213,17 +214,22 @@ namespace TODO
             {
                 Console.Clear();
                 Console.CursorVisible = true;
+
                 Console.WriteLine("Task:  ");
                 Console.WriteLine("Due date (yyyy-MM-dd):  ");
-                Console.SetCursorPosition(36, 0);
 
+                Console.SetCursorPosition(36, 0);
                 var taskName = Console.ReadLine();
 
                 Console.SetCursorPosition(36, 1);
                 var dueDateString = Console.ReadLine();
+
                 Console.CursorVisible = false;
-                Console.WriteLine("Is this correct? (Y)es (N)o ");
+
+                Console.WriteLine("\nIs this correct? (Y)es (N)o ");
+
                 var isCorrectInput = Console.ReadKey(true).Key;
+
                 while (isCorrectInput != ConsoleKey.Y && isCorrectInput != ConsoleKey.N)
                 {
                     isCorrectInput = Console.ReadKey(true).Key;
@@ -247,6 +253,7 @@ namespace TODO
 
                     InsertMyTask(myTask);
 
+                    Console.Clear();
                     Console.WriteLine("Task registered.");
                     Thread.Sleep(2000);
                 }
@@ -261,11 +268,12 @@ namespace TODO
 
         private static void InsertMyTask(MyTask myTask)
         {
-            SqlConnection connection = new SqlConnection(connectionString);
+            using SqlConnection connection = new SqlConnection(connectionString);
             SqlCommand command;
+
             if (!(myTask.DueDate == null))
             {
-                var sql = $@"
+                var sql = @"
                 INSERT INTO MyTask (Name, DueDate)
                 VALUES (@Name, @DueDate)";
 
@@ -278,7 +286,7 @@ namespace TODO
             }
             else
             {
-                var sql = $@"
+                var sql = @"
                 INSERT INTO MyTask (Name)
                 VALUES (@Name)";
 
