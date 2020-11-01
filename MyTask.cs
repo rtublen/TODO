@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace TODO
 {
@@ -17,11 +15,12 @@ namespace TODO
             DueDate = dueDate;
         }
 
-        public MyTask(int id, string name, DateTime? dueDate)
+        public MyTask(int id, string name, DateTime? dueDate, DateTime? completedAt)
         {
             Id = id;
             Name = name;
             DueDate = dueDate;
+            CompletedAt = completedAt;
         }
 
         public int Id { get; }
@@ -59,9 +58,16 @@ namespace TODO
             }
         }
 
+        public DateTime? CompletedAt { get; private set; }
 
-
-
+        public void Complete()
+        {
+            if (CompletedAt != null)
+            {
+                throw new ArgumentException("Already completed!");
+            }
+            CompletedAt = DateTime.Now;
+        }
     }
 }
 
